@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd ">
+    <http:listener-config name="my-trains-customer-sapi-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="${http.port}" />
+    </http:listener-config>
+    <apikit:config name="my-trains-customer-sapi-config" api="resource::527568a4-68d2-43b1-bb57-d74a0aad0b58:my-trains-customer-sapi:1.0.3:raml:zip:my-trains-customer-sapi.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <flow name="my-trains-customer-sapi-main">
+        <http:listener config-ref="my-trains-customer-sapi-httpListenerConfig" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="my-trains-customer-sapi-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Bad request"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">400</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Method not allowed"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">405</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not acceptable"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">406</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Unsupported media type"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">415</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not Implemented"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">501</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="my-trains-customer-sapi-console">
+        <http:listener config-ref="my-trains-customer-sapi-httpListenerConfig" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="my-trains-customer-sapi-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="patch:\customers\(id):application\json:my-trains-customer-sapi-config">
+        <flow-ref doc:name="Flow Reference" doc:id="4093aeed-5a51-41f7-91dd-42e78abe130a" name="customerUpdateFlow" />
+    </flow>
+    <flow name="get:\customers\(id)\subscriptions\(subscriptionId)\alerts:my-trains-customer-sapi-config">
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
+            <ee:variables>
+                <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
+                <ee:set-variable variableName="subscriptionId">attributes.uriParams.'subscriptionId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+[
+  {
+    alertId: 444,
+    subscription_id: 2,
+    email_id: "shanialif@gmail.com",
+    email_notify: "Notified",
+    origin_location: "BCE",
+    destination_location: "RDG",
+    service_type: "train",
+    service_id: "Ysa8j",
+    delay_status: "delayed",
+    delay_time: 12,
+    train_delay_reason: "Train has been cancelled",
+    status_type_id: 1,
+    "creationDate?": "2021-09-03",
+    "createdBy?": "Ben",
+    "lastUpdatedDate?": "2021-09-03",
+    "lastUpdatedBy?": "John"
+  }, 
+  {
+    alertId: 444,
+    subscription_id: 2,
+    email_id: "shanialif@gmail.com",
+    email_notify: "Notified",
+    origin_location: "BCE",
+    destination_location: "RDG",
+    service_type: "train",
+    service_id: "Ysa8j",
+    delay_status: "delayed",
+    delay_time: 12,
+    train_delay_reason: "Train has been cancelled",
+    status_type_id: 1,
+    "creationDate?": "2021-09-03",
+    "createdBy?": "Ben",
+    "lastUpdatedDate?": "2021-09-03",
+    "lastUpdatedBy?": "John"
+  }
+]]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="get:\customers:my-trains-customer-sapi-config">
+        <flow-ref doc:name="Flow Reference" doc:id="91d93142-1988-400e-9242-15dccd17049a" name="getAllCustomersFlow" />
+    </flow>
+    <flow name="get:\customers\(id)\subscriptions:my-trains-customer-sapi-config">
+        <flow-ref doc:name="Flow Reference" doc:id="d8dcebaf-0dcc-4d0e-bb3c-346a0f540afb" name="getSubscriptionsOfACustomerFlow" />
+    </flow>
+    <flow name="get:\customers\(id)\subscriptions\(subscriptionId)\alerts\(alertId):my-trains-customer-sapi-config">
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
+            <ee:variables>
+                <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
+                <ee:set-variable variableName="subscriptionId">attributes.uriParams.'subscriptionId'</ee:set-variable>
+                <ee:set-variable variableName="alertId">attributes.uriParams.'alertId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+[
+  {
+    alertId: 444,
+    subscription_id: 2,
+    email_id: "shanialif@gmail.com",
+    email_notify: "Notified",
+    origin_location: "BCE",
+    destination_location: "RDG",
+    service_type: "train",
+    service_id: "Ysa8j",
+    delay_status: "delayed",
+    delay_time: 12,
+    train_delay_reason: "Train has been cancelled",
+    status_type_id: 1,
+    "creationDate?": "2021-09-03",
+    "createdBy?": "Ben",
+    "lastUpdatedDate?": "2021-09-03",
+    "lastUpdatedBy?": "John"
+  }
+]]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="get:\customers\(id):my-trains-customer-sapi-config">
+        <flow-ref doc:name="Flow Reference" doc:id="b3f8c110-06da-4a38-bbfc-9ae8366e4604" name="getCustomerByIdFlow" />
+    </flow>
+    <flow name="get:\customers\(id)\subscriptions\(subscriptionId):my-trains-customer-sapi-config">
+        <flow-ref doc:name="Flow Reference" doc:id="6b283e7a-a427-4780-93e9-c8b1bbaf25fa" name="getParticularSubscriptionsOfACustomerIdFlow" />
+    </flow>
+    <flow name="post:\customers\(id)\subscriptions\(subscriptionId)\alerts:application\json:my-trains-customer-sapi-config">
+        <flow-ref doc:name="Flow Reference" doc:id="38278294-35e1-41f9-bd4c-a30aa5a34bae" name="postAnAlert" />
+    </flow>
+    <flow name="post:\customers:application\json:my-trains-customer-sapi-config">
+        <flow-ref doc:name="Flow Reference" doc:id="533587bd-0715-4e47-805d-870dc5f1ded9" name="postACustomer" />
+    </flow>
+    <flow name="post:\customers\(id)\subscriptions:application\json:my-trains-customer-sapi-config">
+        <flow-ref doc:name="Flow Reference" doc:id="a262299f-061b-4ed2-88be-9f83a38ede45" name="postASubscription" />
+    </flow>
+    <flow name="get:\customers\sfdc:my-trains-customer-sapi-config">
+		<flow-ref doc:name="Flow Reference" doc:id="f4fda82a-732f-43c1-9fe8-7e94cf6658a4" name="salesforceFlow"/>
+    </flow>
+</mule>

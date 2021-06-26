@@ -1,0 +1,138 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="get-customer-json" format="json">
+      <types:shape format="weave" example="examples/gettraincustomer.json"><![CDATA[%dw 2.0
+
+type get_customer_json = {|
+  customerId: Number {"typeId": "int"}, 
+  firstName: String, 
+  lastName: String, 
+  emailId: String, 
+  phoneNo: String, 
+  "creationDate?": String, 
+  "createdBy?": String, 
+  "lastUpdatedDate?": String, 
+  "lastUpdatedBy?": String, 
+  statusId: Number {"typeId": "int"}
+|} {"example": "{\\\"customerId\\\":123,\\\"firstName\\\":\\\"James\\\",\\\"lastName\\\":\\\"Isacc\\\",\\\"emailId\\\":\\\"james@abc.com\\\",\\\"phoneNo\\\":\\\"790587\\\",\\\"creationDate?\\\":\\\"2021-09-03\\\",\\\"createdBy?\\\":\\\"Ben\\\",\\\"lastUpdatedDate?\\\":\\\"2021-09-03\\\",\\\"lastUpdatedBy?\\\":\\\"John\\\",\\\"statusId\\\":5}"}
+
+]]></types:shape>
+    </types:type>
+    <types:type name="getAllCustomers-json" format="json">
+      <types:shape format="weave" example="examples/getAlltraincustomers.json"><![CDATA[%dw 2.0
+
+type getAllCustomers_json = {|
+  customerId: Number {"typeId": "int"}, 
+  firstName: String, 
+  lastName: String, 
+  emailId: String, 
+  phoneNo: String, 
+  "creationDate?": String, 
+  "createdBy?": String, 
+  "lastUpdatedDate?": String, 
+  "lastUpdatedBy?": String, 
+  statusId: Number {"typeId": "int"}
+|} {"example": "{\\\"customerId\\\":123,\\\"firstName\\\":\\\"James\\\",\\\"lastName\\\":\\\"Isacc\\\",\\\"emailId\\\":\\\"james@abc.com\\\",\\\"phoneNo\\\":\\\"790587\\\",\\\"creationDate?\\\":\\\"2021-09-03\\\",\\\"createdBy?\\\":\\\"Ben\\\",\\\"lastUpdatedDate?\\\":\\\"2021-09-03\\\",\\\"lastUpdatedBy?\\\":\\\"John\\\",\\\"statusId\\\":5}"}
+
+]]></types:shape>
+    </types:type>
+    <types:type name="getSubscriptionsOfACustomer" format="json">
+      <types:shape format="weave" example="examples/getSubscriptionsOfACustomer.json"><![CDATA[%dw 2.0
+
+type getSubscriptionsOfACustomer = {|
+  subscriptionId: Number {"typeId": "int"}, 
+  user_id: Number {"typeId": "int"}, 
+  service_id: String, 
+  alert_service: String, 
+  delay_status: String, 
+  status_type_id: Number {"typeId": "int"}, 
+  departureTime: String, 
+  arrivalTime: String, 
+  fromStation: String, 
+  toStation: String, 
+  startDate: String, 
+  serviceType: String, 
+  route: String, 
+  timePeriod: Number {"typeId": "int"}, 
+  "creationDate?": String, 
+  "createdBy?": String, 
+  "lastUpdatedDate?": String, 
+  "lastUpdatedBy?": String
+|} {"example": "{\\\"subscriptionId\\\":123,\\\"user_id\\\":1,\\\"service_id\\\":\\\"hello\\\",\\\"alert_service\\\":\\\"hhh\\\",\\\"delay_status\\\":\\\"uuu\\\",\\\"status_type_id\\\":1,\\\"departureTime\\\":\\\"12:30:00\\\",\\\"arrivalTime\\\":\\\"12:30:00\\\",\\\"fromStation\\\":\\\"ABC\\\",\\\"toStation\\\":\\\"DEF\\\",\\\"startDate\\\":\\\"2020-05-09\\\",\\\"serviceType\\\":\\\"delayNotification\\\",\\\"route\\\":\\\"BYI\\\",\\\"timePeriod\\\":30,\\\"creationDate?\\\":\\\"2021-09-03\\\",\\\"createdBy?\\\":\\\"Ben\\\",\\\"lastUpdatedDate?\\\":\\\"2021-09-03\\\",\\\"lastUpdatedBy?\\\":\\\"John\\\"}"}
+
+]]></types:shape>
+    </types:type>
+    <types:type name="getASubscriptionOfACustomer-json" format="json">
+      <types:shape format="weave" example="examples/getParticularSubscription.json"><![CDATA[%dw 2.0
+
+type getASubscriptionOfACustomer_json = {|
+  subscriptionId: Number {"typeId": "int"}, 
+  user_id: Number {"typeId": "int"}, 
+  service_id: String, 
+  alert_service: String, 
+  delay_status: String, 
+  status_type_id: Number {"typeId": "int"}, 
+  departureTime: String, 
+  arrivalTime: String, 
+  fromStation: String, 
+  toStation: String, 
+  startDate: String, 
+  serviceType: String, 
+  route: String, 
+  timePeriod: Number {"typeId": "int"}, 
+  "creationDate?": String, 
+  "createdBy?": String, 
+  "lastUpdatedDate?": String, 
+  "lastUpdatedBy?": String
+|} {"example": "{\\\"subscriptionId\\\":123,\\\"user_id\\\":1,\\\"service_id\\\":\\\"hello\\\",\\\"alert_service\\\":\\\"hhh\\\",\\\"delay_status\\\":\\\"uuu\\\",\\\"status_type_id\\\":1,\\\"departureTime\\\":\\\"12:30:00\\\",\\\"arrivalTime\\\":\\\"12:30:00\\\",\\\"fromStation\\\":\\\"ABC\\\",\\\"toStation\\\":\\\"DEF\\\",\\\"startDate\\\":\\\"2020-05-09\\\",\\\"serviceType\\\":\\\"delayNotification\\\",\\\"route\\\":\\\"BYI\\\",\\\"timePeriod\\\":30,\\\"creationDate?\\\":\\\"2021-09-03\\\",\\\"createdBy?\\\":\\\"Ben\\\",\\\"lastUpdatedDate?\\\":\\\"2021-09-03\\\",\\\"lastUpdatedBy?\\\":\\\"John\\\"}"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#f9c5a896-5c31-4406-895f-759a4115a75d">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="get-customer-json"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#6d3f7a1e-73f4-4dda-a3a9-78ceac344307">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="getAllCustomers-json"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#378bcf58-ef61-44ce-afa6-c4429d68b6dd">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="get-customer-json"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#fbd0f448-250c-4727-9423-64a077a6337d">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="getSubscriptionsOfACustomer"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#15d8bee0-a018-4776-acef-13ad6afb2eac">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="getASubscriptionOfACustomer-json"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>

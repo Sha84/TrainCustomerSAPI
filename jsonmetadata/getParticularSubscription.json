@@ -1,0 +1,20 @@
+{
+    "subscriptionId": 123,
+    "user_id": 1,
+    "service_id": "hello",
+    "alert_service": "hhh",
+    "delay_status": "uuu",
+    "status_type_id": 1,
+    "departureTime": "12:30:00",
+    "arrivalTime": "12:30:00",
+    "fromStation": "ABC",
+    "toStation": "DEF",
+    "startDate": "2020-05-09",
+    "serviceType": "delayNotification",
+    "route": "BYI",
+    "timePeriod": 30,
+    "creationDate?": "2021-09-03",
+    "createdBy?": "Ben",
+    "lastUpdatedDate?": "2021-09-03",
+    "lastUpdatedBy?": "John"
+  }

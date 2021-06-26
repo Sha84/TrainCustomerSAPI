@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:servicenow="http://www.mulesoft.org/schema/mule/servicenow" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/servicenow http://www.mulesoft.org/schema/mule/servicenow/current/mule-servicenow.xsd">
+	
+	<configuration doc:name="Configuration" doc:id="bc768ac8-26ab-4873-8bf6-e75af4828cf4" defaultErrorHandler-ref="globalError_Handler" />
+	<error-handler name="globalError_Handler" doc:id="1138fe51-7301-49da-a1d6-25246f0fc05d" >
+		<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="ed2396fd-6187-4fc1-a7cd-1167548dc628" type="ANY">
+			<ee:transform doc:name="Transform Message" doc:id="ae873d4c-a289-4cb1-8719-b8bf2d015fe4" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[output application/xml
+ns inc http://www.service-now.com/incident
+---
+{
+  inc#insert: {
+    caller_id : "Shani",
+    comments:error.description,
+    short_description: error.description
+    
+  }
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</on-error-continue>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="c44d8be2-7d02-4a82-b61d-2a0d74a77e2b" >
+			<ee:transform doc:name="Transform Message" doc:id="2049ac11-5e5a-4ad6-b5ee-72c06e700fcc" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message:"success"
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</on-error-propagate>
+	</error-handler>
+</mule>
